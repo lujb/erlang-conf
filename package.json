@@ -1,0 +1,24 @@
+{
+  "name": "erlang-conf",
+  "version": "0.0.0",
+  "description": "parser of erlang conf",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/lujb/erlang-conf"
+  },
+  "keywords": [
+    "erlang",
+    "conf",
+    "json"
+  ],
+  "author": "lujb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lujb/erlang-conf/issues"
+  },
+  "homepage": "https://github.com/lujb/erlang-conf"
+}
