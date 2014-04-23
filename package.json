@@ -1,8 +1,8 @@
 {
   "name": "erlang-conf",
-  "version": "0.0.0",
-  "description": "parser of erlang conf",
-  "main": "index.js",
+  "version": "0.0.1",
+  "description": "parse erlang term to JSON.",
+  "main": "erlang_conf.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/lujb/erlang-conf/issues"
   },
-  "homepage": "https://github.com/lujb/erlang-conf"
+  "homepage": "https://github.com/lujb/erlang-conf",
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-exec": "~0.4.5"
+  }
 }
