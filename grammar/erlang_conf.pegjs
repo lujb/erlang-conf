@@ -31,6 +31,7 @@ term
   / atom
   / string
   / number
+  / binstr
 
 list
   = '[' nonsense* ']' {
@@ -104,6 +105,15 @@ string
       'length': 1,
       '0': value.join('')
     };
+  }
+
+binstr
+  = '<<' value:string '>>' {
+    return {
+      'type': 'binstr',
+      'length': 1,
+      '0': value
+    }
   }
 
 atom
