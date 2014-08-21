@@ -112,7 +112,7 @@ binstr
     return {
       'type': 'binstr',
       'length': 1,
-      '0': value
+      '0': value[0]
     }
   }
 
