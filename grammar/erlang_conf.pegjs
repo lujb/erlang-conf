@@ -120,8 +120,8 @@ atom
   = "'" value:[^']+ "'" {
     return value.join('');
   } 
-  / value:[a-z]+[a-zA-Z0-9_@]* {
-    return value.join('');
+  / head:[a-z]+ tail:[a-zA-Z0-9_@]* {
+    return head.join('')+tail.join('');
   }
 _
   = ws/nl
