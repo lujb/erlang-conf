@@ -35,10 +35,7 @@ term
   / binstr
 
 list
-  = '[' nonsense* ']' {
-    return {"type": 'list', "length": 0, "line":line};
-  }
-  / '[' nonsense* terms:terms nonsense* ']' {
+  = '[' nonsense* terms:terms nonsense* ']' {
     var result = {};
     result.type = 'list';
     result.length = terms.length;
@@ -48,12 +45,12 @@ list
     }
     return result;
   }
+  / '[' nonsense* ']' {
+    return {"type": 'list', "length": 0, "line":line};
+  }
 
 tuple
-  = '{' nonsense* '}' {
-    return {"type": 'tuple', "length": 0, "line": line};
-  }
-  / '{' nonsense* terms:terms nonsense* '}' {
+  = '{' nonsense* terms:terms nonsense* '}' {
     var result = {};
     result.type = 'tuple';
     result.length = terms.length;
@@ -62,6 +59,9 @@ tuple
       result[i] = terms[i];
     }
     return result;
+  }
+  / '{' nonsense* '}' {
+    return {"type": 'tuple', "length": 0, "line": line};
   }
 
 terms
@@ -125,6 +125,11 @@ integer
 
 string
   = '"' value:[^"]* '"' {
+    for (var i=0; i<value.length; i++) {
+      if (value[i] === '\n') {
+        line++;
+      }
+    }
     return {
       "type": 'string',
       "length": 1,
@@ -145,6 +150,11 @@ binstr
 
 atom
   = "'" value:[^']+ "'" {
+    for (var i=0; i<value.length; i++) {
+      if (value[i] === '\n') {
+        line++;
+      }
+    }
     return {
       "type": 'atom',
       "length": 1,
