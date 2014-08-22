@@ -39,6 +39,7 @@ module.exports = (function() {
             var result = {};
             result.type = 'list';
             result.length = value.length;
+            result.line = line;
             for(var i=0; i< value.length; i++) {
               result[i] = value[i];
             }
@@ -61,12 +62,13 @@ module.exports = (function() {
         peg$c14 = "]",
         peg$c15 = { type: "literal", value: "]", description: "\"]\"" },
         peg$c16 = function() {
-            return {'type': 'list', 'length': 0};
+            return {"type": 'list', "length": 0, "line":line};
           },
         peg$c17 = function(terms) {
             var result = {};
             result.type = 'list';
             result.length = terms.length;
+            result.line = line;
             for(var i=0; i< terms.length; i++) {
               result[i] = terms[i];
             }
@@ -77,12 +79,13 @@ module.exports = (function() {
         peg$c20 = "}",
         peg$c21 = { type: "literal", value: "}", description: "\"}\"" },
         peg$c22 = function() {
-            return {'type': 'tuple', 'length': 0};
+            return {"type": 'tuple', "length": 0, "line": line};
           },
         peg$c23 = function(terms) {
             var result = {};
             result.type = 'tuple';
             result.length = terms.length;
+            result.line = line;
             for(var i=0; i< terms.length; i++) {
               result[i] = terms[i];
             }
@@ -102,27 +105,49 @@ module.exports = (function() {
         peg$c29 = /^[0-9a-zA-Z]/,
         peg$c30 = { type: "class", value: "[0-9a-zA-Z]", description: "[0-9a-zA-Z]" },
         peg$c31 = function(base, int) {
-            return parseInt(int.join(''), base);
+            return {
+              "type": 'integer',
+              "length": 1,
+              "line": line,
+              "0": parseInt(int.join(''), base)
+            };
           },
         peg$c32 = /^[0-9]/,
         peg$c33 = { type: "class", value: "[0-9]", description: "[0-9]" },
         peg$c34 = function(int, fraction) {
             fraction.unshift('.');
-            return parseFloat(int+fraction.join(''));
+            return {
+              "type": 'float',
+              "length": 1,
+              "line": line,
+              "0": parseFloat(int+fraction.join(''))
+            };
           },
         peg$c35 = function(int) {
-            return int;
+            return {
+              "type": 'integer',
+              "length": 1,
+              "line": line,
+              "0": int
+            };
           },
         peg$c36 = "$",
         peg$c37 = { type: "literal", value: "$", description: "\"$\"" },
         peg$c38 = "\\",
         peg$c39 = { type: "literal", value: "\\", description: "\"\\\\\"" },
         peg$c40 = function(escape, char) {
+            var val;
             if (escape && escape_chars[char]) {
-              return escape_chars[char];
+              val = escape_chars[char];
             } else {
-              return char.charCodeAt(0);
+              val = char.charCodeAt(0);
             }
+            return {
+              "type": 'integer',
+              "length": 1,
+              "line": line,
+              "0": val
+            };
           },
         peg$c41 = /^[1-9]/,
         peg$c42 = { type: "class", value: "[1-9]", description: "[1-9]" },
@@ -139,9 +164,10 @@ module.exports = (function() {
         peg$c48 = { type: "class", value: "[^\"]", description: "[^\"]" },
         peg$c49 = function(value) {
             return {
-              'type': 'string',
-              'length': 1,
-              '0': value.join('')
+              "type": 'string',
+              "length": 1,
+              "line": line,
+              "0": value.join('')
             };
           },
         peg$c50 = "<<",
@@ -150,9 +176,10 @@ module.exports = (function() {
         peg$c53 = { type: "literal", value: ">>", description: "\">>\"" },
         peg$c54 = function(value) {
             return {
-              'type': 'binstr',
-              'length': 1,
-              '0': value[0]
+              "type": 'binstr',
+              "length": 1,
+              "line": line,
+              "0": value[0]
             }
           },
         peg$c55 = "'",
@@ -160,23 +187,34 @@ module.exports = (function() {
         peg$c57 = /^[^']/,
         peg$c58 = { type: "class", value: "[^']", description: "[^']" },
         peg$c59 = function(value) {
-            return value.join('');
+            return {
+              "type": 'atom',
+              "length": 1,
+              "line": line,
+              "0": value.join('')
+            };
           },
         peg$c60 = /^[a-z]/,
         peg$c61 = { type: "class", value: "[a-z]", description: "[a-z]" },
         peg$c62 = /^[a-zA-Z0-9_@]/,
         peg$c63 = { type: "class", value: "[a-zA-Z0-9_@]", description: "[a-zA-Z0-9_@]" },
         peg$c64 = function(head, tail) {
-            return head.join('')+tail.join('');
+            return {
+              "type": 'atom',
+              "length": 1,
+              "line": line,
+              "0": head.join('')+tail.join('')
+            };
           },
-        peg$c65 = "\n",
-        peg$c66 = { type: "literal", value: "\n", description: "\"\\n\"" },
-        peg$c67 = "\r\n",
-        peg$c68 = { type: "literal", value: "\r\n", description: "\"\\r\\n\"" },
-        peg$c69 = /^[ \t]/,
-        peg$c70 = { type: "class", value: "[ \\t]", description: "[ \\t]" },
-        peg$c71 = /^[!"#$%&'()*+,-.\/0-9:;<=>?@A-Z[\\\]\^_`a-z{|}~]/,
-        peg$c72 = { type: "class", value: "[!\"#$%&'()*+,-.\\/0-9:;<=>?@A-Z[\\\\\\]\\^_`a-z{|}~]", description: "[!\"#$%&'()*+,-.\\/0-9:;<=>?@A-Z[\\\\\\]\\^_`a-z{|}~]" },
+        peg$c65 = function() { line++; },
+        peg$c66 = "\n",
+        peg$c67 = { type: "literal", value: "\n", description: "\"\\n\"" },
+        peg$c68 = "\r\n",
+        peg$c69 = { type: "literal", value: "\r\n", description: "\"\\r\\n\"" },
+        peg$c70 = /^[ \t]/,
+        peg$c71 = { type: "class", value: "[ \\t]", description: "[ \\t]" },
+        peg$c72 = /^[!"#$%&'()*+,-.\/0-9:;<=>?@A-Z[\\\]\^_`a-z{|}~]/,
+        peg$c73 = { type: "class", value: "[!\"#$%&'()*+,-.\\/0-9:;<=>?@A-Z[\\\\\\]\\^_`a-z{|}~]", description: "[!\"#$%&'()*+,-.\\/0-9:;<=>?@A-Z[\\\\\\]\\^_`a-z{|}~]" },
 
         peg$currPos          = 0,
         peg$reportedPos      = 0,
@@ -1283,11 +1321,17 @@ module.exports = (function() {
     }
 
     function peg$parse_() {
-      var s0;
+      var s0, s1;
 
-      s0 = peg$parsews();
+      s0 = peg$currPos;
+      s1 = peg$parsenl();
+      if (s1 !== peg$FAILED) {
+        peg$reportedPos = s0;
+        s1 = peg$c65();
+      }
+      s0 = s1;
       if (s0 === peg$FAILED) {
-        s0 = peg$parsenl();
+        s0 = peg$parsews();
       }
 
       return s0;
@@ -1297,19 +1341,19 @@ module.exports = (function() {
       var s0;
 
       if (input.charCodeAt(peg$currPos) === 10) {
-        s0 = peg$c65;
+        s0 = peg$c66;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c66); }
+        if (peg$silentFails === 0) { peg$fail(peg$c67); }
       }
       if (s0 === peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c67) {
-          s0 = peg$c67;
+        if (input.substr(peg$currPos, 2) === peg$c68) {
+          s0 = peg$c68;
           peg$currPos += 2;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c68); }
+          if (peg$silentFails === 0) { peg$fail(peg$c69); }
         }
       }
 
@@ -1319,12 +1363,12 @@ module.exports = (function() {
     function peg$parsews() {
       var s0;
 
-      if (peg$c69.test(input.charAt(peg$currPos))) {
+      if (peg$c70.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c70); }
+        if (peg$silentFails === 0) { peg$fail(peg$c71); }
       }
 
       return s0;
@@ -1333,18 +1377,18 @@ module.exports = (function() {
     function peg$parseascii() {
       var s0;
 
-      if (peg$c71.test(input.charAt(peg$currPos))) {
+      if (peg$c72.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c72); }
+        if (peg$silentFails === 0) { peg$fail(peg$c73); }
       }
 
       return s0;
     }
 
-    var escape_chars = {'b': 8, 'd': 127, 'e': 27, 'f': 12, 'n': 10, 'r': 13, 's': 32, 't': 9, 'v': 11 };
+    var escape_chars = {'b': 8, 'd': 127, 'e': 27, 'f': 12, 'n': 10, 'r': 13, 's': 32, 't': 9, 'v': 11 }; var line=1;
 
     peg$result = peg$startRuleFunction();
 

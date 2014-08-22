@@ -1,4 +1,4 @@
-{var escape_chars = {'b': 8, 'd': 127, 'e': 27, 'f': 12, 'n': 10, 'r': 13, 's': 32, 't': 9, 'v': 11 };}
+{var escape_chars = {'b': 8, 'd': 127, 'e': 27, 'f': 12, 'n': 10, 'r': 13, 's': 32, 't': 9, 'v': 11 }; var line=1;}
 
 
 start
@@ -6,6 +6,7 @@ start
     var result = {};
     result.type = 'list';
     result.length = value.length;
+    result.line = line;
     for(var i=0; i< value.length; i++) {
       result[i] = value[i];
     }
@@ -35,12 +36,13 @@ term
 
 list
   = '[' nonsense* ']' {
-    return {'type': 'list', 'length': 0};
+    return {"type": 'list', "length": 0, "line":line};
   }
   / '[' nonsense* terms:terms nonsense* ']' {
     var result = {};
     result.type = 'list';
     result.length = terms.length;
+    result.line = line;
     for(var i=0; i< terms.length; i++) {
       result[i] = terms[i];
     }
@@ -49,12 +51,13 @@ list
 
 tuple
   = '{' nonsense* '}' {
-    return {'type': 'tuple', 'length': 0};
+    return {"type": 'tuple', "length": 0, "line": line};
   }
   / '{' nonsense* terms:terms nonsense* '}' {
     var result = {};
     result.type = 'tuple';
     result.length = terms.length;
+    result.line = line;
     for(var i=0; i< terms.length; i++) {
       result[i] = terms[i];
     }
@@ -72,21 +75,43 @@ terms
 
 number
   = base:integer '#' int:[0-9a-zA-Z]+ {
-    return parseInt(int.join(''), base);
+    return {
+      "type": 'integer',
+      "length": 1,
+      "line": line,
+      "0": parseInt(int.join(''), base)
+    };
   }
   / int:integer '.' fraction:[0-9]+ {
     fraction.unshift('.');
-    return parseFloat(int+fraction.join(''));
+    return {
+      "type": 'float',
+      "length": 1,
+      "line": line,
+      "0": parseFloat(int+fraction.join(''))
+    };
   }
   / int:integer {
-    return int;
+    return {
+      "type": 'integer',
+      "length": 1,
+      "line": line,
+      "0": int
+    };
   }
   / '$' escape:'\\'? char:ascii {
+    var val;
     if (escape && escape_chars[char]) {
-      return escape_chars[char];
+      val = escape_chars[char];
     } else {
-      return char.charCodeAt(0);
+      val = char.charCodeAt(0);
     }
+    return {
+      "type": 'integer',
+      "length": 1,
+      "line": line,
+      "0": val
+    };
   }
 
 integer
@@ -101,30 +126,43 @@ integer
 string
   = '"' value:[^"]* '"' {
     return {
-      'type': 'string',
-      'length': 1,
-      '0': value.join('')
+      "type": 'string',
+      "length": 1,
+      "line": line,
+      "0": value.join('')
     };
   }
 
 binstr
   = '<<' value:string '>>' {
     return {
-      'type': 'binstr',
-      'length': 1,
-      '0': value[0]
+      "type": 'binstr',
+      "length": 1,
+      "line": line,
+      "0": value[0]
     }
   }
 
 atom
   = "'" value:[^']+ "'" {
-    return value.join('');
+    return {
+      "type": 'atom',
+      "length": 1,
+      "line": line,
+      "0": value.join('')
+    };
   } 
   / head:[a-z]+ tail:[a-zA-Z0-9_@]* {
-    return head.join('')+tail.join('');
+    return {
+      "type": 'atom',
+      "length": 1,
+      "line": line,
+      "0": head.join('')+tail.join('')
+    };
   }
 _
-  = ws/nl
+  = nl { line++; }
+  / ws
 
 nl
   = '\n'/'\r\n'
