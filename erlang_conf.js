@@ -199,6 +199,7 @@ module.exports = (function() {
             }
             return {
               "type": 'atom',
+              "quoted": true,
               "length": 1,
               "line": line,
               "0": value.join('')
