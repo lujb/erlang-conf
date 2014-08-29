@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         exec: {
             generate_js_from_grammar: {
-                command: 'pegjs ./grammar/erlang_conf.pegjs ./erlang_conf.js'
+                command: 'pegjs ./grammar/erlang-conf.pegjs ./erlang-conf.js'
             }
         }
     });
@@ -15,11 +15,10 @@ module.exports = function(grunt) {
     // paring test.conf
     grunt.registerTask('default', 'paring test.conf', function() {
         var fs = require('fs');
-        var conf = require('./erlang_conf');
+        var conf = require('./erlang-conf');
 
         var filename = './test.conf'
         var data = fs.readFileSync(filename, {'encoding': 'utf8'});
-
         console.log(JSON.stringify(conf.parse(data), 0, 4));
         grunt.log.write('parsing test.conf...').ok();
     });
