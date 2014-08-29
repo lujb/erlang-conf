@@ -2,7 +2,7 @@
   "name": "erlang-conf",
   "version": "0.0.1",
   "description": "parse erlang term to JSON.",
-  "main": "erlang_conf.js",
+  "main": "erlang-conf.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
