@@ -1,6 +1,6 @@
 {
   "name": "erlang-conf",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "parse erlang term to JSON.",
   "main": "erlang-conf.js",
   "scripts": {
