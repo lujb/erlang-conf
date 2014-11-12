@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         exec: {
             generate_js_from_grammar: {
-                command: 'pegjs ./grammar/erlang-conf.pegjs ./erlang-conf.js'
+                command: 'pegjs ./grammar/erlang-conf.pegjs ./lib/parser.js'
             }
         }
     });
