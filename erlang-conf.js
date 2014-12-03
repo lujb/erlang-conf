@@ -54,14 +54,21 @@ exports.stringify = function(term) {
   stringifiers.integer = function(term, out) {
     return term[0];
   }
+  stringifiers.float = function(term, out) {
+    return term[0];
+  }
   stringifiers.string = function(term, out) {
     return '"' + term[0] + '"';
+  }
+  stringifiers.binstr = function(term, out) {
+    return '<<"' + term[0] + '">>';
   }
   stringifiers.boolean = function(term, out) {
     return term[0];
   }
 
   for (var i=0; i< term.length; i++) {
+    console.log('want:', term[i].type);
     var stringifier = stringifiers[term[i].type];
     if (i!==0) {
       out += '\n\n';

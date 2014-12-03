@@ -19,7 +19,10 @@ module.exports = function(grunt) {
 
         var filename = './test.conf'
         var data = fs.readFileSync(filename, {'encoding': 'utf8'});
-        console.log(JSON.stringify(conf.parse(data), 0, 4));
+        var term = conf.parse(data);
+        console.log(JSON.stringify(term, 0, 4));
+        console.log(conf.stringify(term));
+
         grunt.log.write('parsing test.conf...').ok();
     });
 
