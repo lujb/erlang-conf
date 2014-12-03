@@ -68,7 +68,6 @@ exports.stringify = function(term) {
   }
 
   for (var i=0; i< term.length; i++) {
-    console.log('want:', term[i].type);
     var stringifier = stringifiers[term[i].type];
     if (i!==0) {
       out += '\n\n';
