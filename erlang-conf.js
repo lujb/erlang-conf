@@ -1,4 +1,16 @@
-exports.parse = require('./lib/parser').parse;
+_parse = require('./lib/parser').parse;
+
+exports.parse = function(content, cb) {
+  if (cb) {
+    var term, err = null;
+    try {
+      term = _parse(content);
+    } catch (e) { err = e; }
+    cb(err, term);
+  } else {
+    return _parse(content);
+  }
+}
 
 exports.stringify = function(term) {
   var out = '';
