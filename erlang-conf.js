@@ -14,23 +14,13 @@ exports.parse = function(content, cb) {
 
 exports.stringify = function(term) {
   var out = '';
+  var stringifiers = {};
 
-  for (var i=0; i< term.length; i++) {
-    var stringifier = getStringifier(term[i].type);
-    if (i!==0) {
-      out += '\n\n';
-    }
-    out += stringifier.call({indt: 0}, term[i]);
-    out += '.';
-  }
-
-  return out;
-
-  function list(term) {
+  stringifiers.list = function(term) {
     var out = indent(this, term.length) + '[';
 
     for (var i=0; i< term.length; i++) {
-      var stringifier = getStringifier(term[i].type);
+      var stringifier = stringifiers[term[i].type];
       if (i!==0) {
         out += ', ';
       }
@@ -40,10 +30,10 @@ exports.stringify = function(term) {
 
     return out;
   }
-  function tuple(term) {
+  stringifiers.tuple = function(term) {
     var out = indent(this, term.length) + '{';
     for (var i=0; i< term.length; i++) {
-      var stringifier = getStringifier(term[i].type);
+      var stringifier = stringifiers[term[i].type];
       if (i !== 0) {
         out += ', ';
       }
@@ -52,7 +42,7 @@ exports.stringify = function(term) {
     out += '}';
     return out;
   }
-  function atom(term) {
+  stringifiers.atom = function(term) {
     var out = term[0];
 
     if (/^[a-z][a-zA-Z0-9_@]*$/.test(out)) {
@@ -61,19 +51,26 @@ exports.stringify = function(term) {
       return "'" + out + "'";
     }
   }
-  function integer(term, out) {
+  stringifiers.integer = function(term, out) {
     return term[0];
   }
-  function string(term, out) {
+  stringifiers.string = function(term, out) {
     return '"' + term[0] + '"';
   }
-  function boolean(term, out) {
+  stringifiers.boolean = function(term, out) {
     return term[0];
   }
 
-  function getStringifier(type) {
-    return eval(type);
+  for (var i=0; i< term.length; i++) {
+    var stringifier = stringifiers[term[i].type];
+    if (i!==0) {
+      out += '\n\n';
+    }
+    out += stringifier.call({indt: 0}, term[i]);
+    out += '.';
   }
+
+  return out;
 
   function indent(o, len) {
     if (o.indt!==0 && o.i!==0 && len>0) {
