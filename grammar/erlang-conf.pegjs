@@ -105,7 +105,7 @@ number
   }
   / int:integer {
     var ast = new Ast('integer');
-    ast[0] = int;
+    ast[0] = parseInt(int);
     return ast;
   }
   / '$' escape:'\\'? char:ascii {
